@@ -30,6 +30,7 @@ Things to consider:
   -- Since the set can be in the millions, the discrete size for the cumulative can
      be as small as 0.000001 (1/1e6). The PNRG will need to account for this.
 """
+from typing import Dict, List
 
 
 class RandomNumberGenerator:
@@ -37,8 +38,40 @@ class RandomNumberGenerator:
     Instantiates the Pseudorandom number generator with a seed value.
     """
 
-    def __init__(self, seed: int):
+    def __init__(self, seed: int, distribution_map: Dict[int, float]):
         self.seed = seed
+        self.distribution_map = distribution_map
+        self.random_numbers = self.generate_random_numbers(self.distribution_map)
+
+    def generate_random_numbers(self, distribution_map: Dict[int, float]) -> List[float]:
+        return [distribution_map.__len__()]
 
     def get_seed(self):
         return self.seed
+
+    def get_random_numbers(self):
+        return self.random_numbers
+
+
+def generate_random_number(number: int) -> int:
+    """
+    Uses the Linear Congruence method to generate "random" numbers.
+    f(x) = (a * x_1 + b) mod M
+    https://en.wikipedia.org/wiki/Linear_congruential_generator
+
+    Where:
+    X, is the sequence of pseudo-random numbers
+    m, ( > 0) the modulus
+    a, (0, m) the multiplier
+    b, (0, m) the increment
+    X0,  [0, m) – Initial value of sequence known as seed
+    """
+
+    # My research showed me that there are certain numbers that produce
+    # good distributions with a high period. I'm following the advice
+    # of using a MINSTD found here: https://en.wikipedia.org/wiki/Lehmer_random_number_generator
+    # Please note that b = 0
+    a = 7 ** 5
+    m = 2 ** 31 - 1
+
+    return (a * number) % m
