@@ -1,0 +1,7 @@
+__pycache__/
+**/.pytest_cache
+**/file.log
+.idea/
+.env
+.coverage
+cov.xml
