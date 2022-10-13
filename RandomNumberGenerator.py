@@ -38,22 +38,51 @@ class RandomNumberGenerator:
     Instantiates the Pseudorandom number generator with a seed value.
     """
 
+    # Decided that this was a reasonable number of values
+    AMOUNT_OF_RANDOM_NUMBERS = 10
+
     def __init__(self, seed: int, distribution_map: Dict[int, float]):
         self.seed = seed
         self.distribution_map = distribution_map
-        self.random_numbers = self.generate_random_numbers(self.distribution_map)
+        self.random_numbers = generate_random_numbers(self.seed, self.AMOUNT_OF_RANDOM_NUMBERS, [])
 
-    def generate_random_numbers(self, distribution_map: Dict[int, float]) -> List[float]:
-        return [distribution_map.__len__()]
+    def generate_next_random_number(self):
+        # TODO: Implement me
+        # Use a pointer to get the next value in the array, when we reach the end, cycle back
 
     def get_seed(self):
         return self.seed
 
-    def get_random_numbers(self):
+    def _get_random_numbers(self):
         return self.random_numbers
 
 
-def generate_random_number(number: int) -> int:
+def generate_random_numbers(seed: int,
+                            amount_of_numbers_to_generate: int,
+                            generated_numbers: List[float]) -> List[float]:
+    """
+    Generates N amount of random numbers based on a seed value.
+    Internally uses the Lehmer random number generator algorithm found here:
+    https://en.wikipedia.org/wiki/Lehmer_random_number_generator
+    """
+    # My research showed me that there are certain numbers that produce
+    # good distributions with a high period. I'm following the advice
+    # of using a MINSTD found here: https://en.wikipedia.org/wiki/Lehmer_random_number_generator
+    # Please note that b = 0
+    multiplier = 7 ** 5
+    modulus = 2 ** 31 - 1
+
+    # Initialize the random number using the seed
+    next_random_number = generate_random_number(seed, multiplier, modulus)
+
+    for i in range(amount_of_numbers_to_generate):
+        next_random_number = generate_random_number(next_random_number, multiplier, modulus)
+        generated_numbers += [next_random_number / modulus]
+
+    return generated_numbers
+
+
+def generate_random_number(number: int, multiplier: int, modulus: int) -> int:
     """
     Uses the Linear Congruence method to generate "random" numbers.
     f(x) = (a * x_1 + b) mod M
@@ -67,11 +96,4 @@ def generate_random_number(number: int) -> int:
     X0,  [0, m) – Initial value of sequence known as seed
     """
 
-    # My research showed me that there are certain numbers that produce
-    # good distributions with a high period. I'm following the advice
-    # of using a MINSTD found here: https://en.wikipedia.org/wiki/Lehmer_random_number_generator
-    # Please note that b = 0
-    a = 7 ** 5
-    m = 2 ** 31 - 1
-
-    return (a * number) % m
+    return (multiplier * number) % modulus

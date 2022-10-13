@@ -13,9 +13,9 @@ def print_hi(name):
         2: 0.5,
         7: 0.25
     }
-    rng = RandomNumberGenerator(1000, sample_dist)
+    rng = RandomNumberGenerator(23487, sample_dist)
     print(rng.get_seed())
-    print(rng.get_random_numbers())
+    print(rng._get_random_numbers())
 
 
 # Press the green button in the gutter to run the script.
