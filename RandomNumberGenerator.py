@@ -39,21 +39,30 @@ class RandomNumberGenerator:
     """
 
     # Decided that this was a reasonable number of values
-    AMOUNT_OF_RANDOM_NUMBERS = 10
+    AMOUNT_OF_RANDOM_NUMBERS = 5
 
     def __init__(self, seed: int, distribution_map: Dict[int, float]):
         self.seed = seed
         self.distribution_map = distribution_map
         self.random_numbers = generate_random_numbers(self.seed, self.AMOUNT_OF_RANDOM_NUMBERS, [])
+        # We're gonna use a pointer to keep track of the next generated number to return
+        # B/c the generated numbers is an array, we'll start at index 0
+        self.pointer = 0
 
-    def generate_next_random_number(self):
-        # TODO: Implement me
-        # Use a pointer to get the next value in the array, when we reach the end, cycle back
+    def get_next_random_number_from_prng(self) -> float:
+        """
+        Returns the next random number from the generated random number list
+        """
 
-    def get_seed(self):
+        next_random_number = self.random_numbers[self.pointer]
+        self.pointer = determine_next_pointer(self.pointer, self.random_numbers.__len__())
+
+        return next_random_number
+
+    def get_seed(self) -> int:
         return self.seed
 
-    def _get_random_numbers(self):
+    def _get_random_numbers(self) -> List[float]:
         return self.random_numbers
 
 
@@ -97,3 +106,14 @@ def generate_random_number(number: int, multiplier: int, modulus: int) -> int:
     """
 
     return (multiplier * number) % modulus
+
+
+def determine_next_pointer(pointer: int, length_of_array: int) -> int:
+    """
+    Determines the next circular pointer for an array.
+    If the pointer reaches the end of the array,
+    it starts back at the beginning
+    """
+    is_end_of_array = pointer == length_of_array - 1
+
+    return 0 if is_end_of_array else pointer + 1

@@ -16,6 +16,9 @@ def print_hi(name):
     rng = RandomNumberGenerator(23487, sample_dist)
     print(rng.get_seed())
     print(rng._get_random_numbers())
+    print()
+    for i in range(10000000):
+        print(rng.get_next_random_number_from_prng())
 
 
 # Press the green button in the gutter to run the script.
