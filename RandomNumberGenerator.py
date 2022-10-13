@@ -34,6 +34,30 @@ from typing import Dict, List, Tuple
 
 
 def find_index_for_value(values: List[float], value_to_search_for: float) -> int:
+    """
+    Looks for the index that the value within the range of the search value. E.g.
+    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
+    would return 2 b/c it's within the range 0.3 to 0.5 (inclusive)
+
+    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
+    would return 0 b/c it's within the range 0.3 to 0.24 (inclusive)
+
+    It needs the list to be sorted before the method is called.
+    Worst case search takes O(n) on average O(n/2).
+
+    A more effective solution would use a binary search or another divide and conquer algorithm.
+
+    :param values:
+    :param value_to_search_for:
+    :return: the index
+    """
+    for i in range(len(values)):
+        if values[i] == value_to_search_for:
+            return i
+
+        if values[i] < value_to_search_for <= values[i + 1]:
+            return i + 1
+
     return 0
 
 
@@ -43,7 +67,7 @@ class RandomNumberGenerator:
     """
 
     # Decided that this was a reasonable number of values
-    AMOUNT_OF_RANDOM_NUMBERS = 5
+    AMOUNT_OF_RANDOM_NUMBERS = 10000
 
     def __init__(self, seed: int, distribution_map: Dict[int, float]):
         self.seed = seed
@@ -59,6 +83,7 @@ class RandomNumberGenerator:
 
     def get_random_number(self) -> int:
         normalized_random_value = self._get_next_random_number_from_prng()
+        # self.cumulative_distribution will be naturally sorted, so we can use a binary search
         index_of_random_value = find_index_for_value(self.cumulative_distribution, normalized_random_value)
         return self.values[index_of_random_value]
 

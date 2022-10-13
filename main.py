@@ -16,14 +16,23 @@ def print_hi(name):
         11: 0.4
     }
     rng = RandomNumberGenerator(23487, sample_dist)
-    print(rng.get_seed())
-    print(rng._get_random_numbers())
-    print()
-    for i in range(15):
-        print(rng._get_next_random_number_from_prng())
+    # print(rng.get_seed())
+    # print(rng._get_random_numbers())
+    # print()
+    # for i in range(15):
+    #     print(rng._get_next_random_number_from_prng())
+    #
+    # print(rng._get_cumulative_distribution())
+    freq_map = {}
+    for i in range(10000):
+        print(rng.get_random_number())
+        num = rng.get_random_number()
+        if num in freq_map:
+            freq_map[num] = freq_map[num] + 1
+        else:
+            freq_map[num] = 1
 
-    print(rng._get_cumulative_distribution())
-    print(rng.get_random_number())
+    print(freq_map)
 
 
 # Press the green button in the gutter to run the script.
