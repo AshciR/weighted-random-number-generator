@@ -30,7 +30,7 @@ Things to consider:
   -- Since the set can be in the millions, the discrete size for the cumulative can
      be as small as 0.000001 (1/1e6). The PNRG will need to account for this.
 """
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 class RandomNumberGenerator:
@@ -48,8 +48,12 @@ class RandomNumberGenerator:
         # We're gonna use a pointer to keep track of the next generated number to return
         # B/c the generated numbers is an array, we'll start at index 0
         self.pointer = 0
+        self.values, self.cumulative_distribution = create_cumulative_distribution_tuple(self.distribution_map)
 
-    def get_next_random_number_from_prng(self) -> float:
+    def get_seed(self) -> int:
+        return self.seed
+
+    def _get_next_random_number_from_prng(self) -> float:
         """
         Returns the next random number from the generated random number list
         """
@@ -59,11 +63,47 @@ class RandomNumberGenerator:
 
         return next_random_number
 
-    def get_seed(self) -> int:
-        return self.seed
-
     def _get_random_numbers(self) -> List[float]:
         return self.random_numbers
+
+    def _get_cumulative_distribution(self):
+        return self.values, self.cumulative_distribution
+
+
+def create_cumulative_distribution_tuple(distribution_map: Dict[int, float]) -> Tuple[List[int], List[float]]:
+    """
+    Create a tuple that contains the cumulative distribution for probabilities. E.g:
+    1 => 0.25
+    2 => 0.5
+    7 => 0.25
+    would translate to
+    ([1, 2, 7], [0.25, 0.75, 1])
+    """
+    numbers = list(distribution_map.keys())
+    distribution = list(distribution_map.values())
+
+    cumulative_distribution = create_cumulative_distribution(distribution)
+
+    return numbers, cumulative_distribution
+
+
+def create_cumulative_distribution(distribution: List[float]) -> List[float]:
+    """
+    Create a set that contains the cumulative distribution for the probabilities. E.g:
+    [0.25, 0.5, 0.25]
+    would translate to
+    [0.25, 0.75, 1]
+    :param distribution
+    :return: the cumulative distribution
+    """
+    # We need the initial value
+    cumulative_distribution = [distribution[0]]
+
+    for i in range(1, len(distribution)):
+        next_distribution = cumulative_distribution[i - 1] + distribution[i]
+        cumulative_distribution.append(next_distribution)
+
+    return cumulative_distribution
 
 
 def generate_random_numbers(seed: int,
