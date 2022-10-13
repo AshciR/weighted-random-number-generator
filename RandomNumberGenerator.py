@@ -33,6 +33,10 @@ Things to consider:
 from typing import Dict, List, Tuple
 
 
+def find_index_for_value(values: List[float], value_to_search_for: float) -> int:
+    return 0
+
+
 class RandomNumberGenerator:
     """
     Instantiates the Pseudorandom number generator with a seed value.
@@ -52,6 +56,11 @@ class RandomNumberGenerator:
 
     def get_seed(self) -> int:
         return self.seed
+
+    def get_random_number(self) -> int:
+        normalized_random_value = self._get_next_random_number_from_prng()
+        index_of_random_value = find_index_for_value(self.cumulative_distribution, normalized_random_value)
+        return self.values[index_of_random_value]
 
     def _get_next_random_number_from_prng(self) -> float:
         """

@@ -23,6 +23,7 @@ def print_hi(name):
         print(rng._get_next_random_number_from_prng())
 
     print(rng._get_cumulative_distribution())
+    print(rng.get_random_number())
 
 
 # Press the green button in the gutter to run the script.
