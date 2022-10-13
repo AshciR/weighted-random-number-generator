@@ -33,41 +33,13 @@ Things to consider:
 from typing import Dict, List, Tuple
 
 
-def find_index_for_value(values: List[float], value_to_search_for: float) -> int:
-    """
-    Looks for the index that the value within the range of the search value. E.g.
-    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
-    would return 2 b/c it's within the range 0.3 to 0.5 (inclusive)
-
-    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
-    would return 0 b/c it's within the range 0.3 to 0.24 (inclusive)
-
-    It needs the list to be sorted before the method is called.
-    Worst case search takes O(n) on average O(n/2).
-
-    A more effective solution would use a binary search or another divide and conquer algorithm.
-
-    :param values:
-    :param value_to_search_for:
-    :return: the index
-    """
-    for i in range(len(values)):
-        if values[i] == value_to_search_for:
-            return i
-
-        if values[i] < value_to_search_for <= values[i + 1]:
-            return i + 1
-
-    return 0
-
-
 class RandomNumberGenerator:
     """
     Instantiates the Pseudorandom number generator with a seed value.
     """
 
     # Decided that this was a reasonable number of values
-    AMOUNT_OF_RANDOM_NUMBERS = 10000
+    AMOUNT_OF_RANDOM_NUMBERS = 100000
 
     def __init__(self, seed: int, distribution_map: Dict[int, float]):
         self.seed = seed
@@ -191,3 +163,31 @@ def determine_next_pointer(pointer: int, length_of_array: int) -> int:
     is_end_of_array = pointer == length_of_array - 1
 
     return 0 if is_end_of_array else pointer + 1
+
+
+def find_index_for_value(values: List[float], value_to_search_for: float) -> int:
+    """
+    Looks for the index that the value within the range of the search value. E.g.
+    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
+    would return 2 b/c it's within the range 0.3 to 0.5 (inclusive)
+
+    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
+    would return 0 b/c it's within the range 0.3 to 0.24 (inclusive)
+
+    It needs the list to be sorted before the method is called.
+    Worst case search takes O(n) on average O(n/2).
+
+    A more effective solution would use a binary search or another divide and conquer algorithm.
+
+    :param values:
+    :param value_to_search_for:
+    :return: the index
+    """
+    for i in range(len(values)):
+        if values[i] == value_to_search_for:
+            return i
+
+        if values[i] < value_to_search_for <= values[i + 1]:
+            return i + 1
+
+    return 0
