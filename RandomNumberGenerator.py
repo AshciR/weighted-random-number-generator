@@ -56,7 +56,8 @@ class RandomNumberGenerator:
     def get_random_number(self) -> int:
         normalized_random_value = self._get_next_random_number_from_prng()
         # self.cumulative_distribution will be naturally sorted, so we can use a binary search
-        index_of_random_value = find_index_for_value(self.cumulative_distribution, normalized_random_value)
+        index_of_random_value = find_index_for_value_binary_search(self.cumulative_distribution,
+                                                                   normalized_random_value)
         return self.values[index_of_random_value]
 
     def _get_next_random_number_from_prng(self) -> float:
@@ -171,7 +172,7 @@ def find_index_for_value(values: List[float], value_to_search_for: float) -> int
     find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
     would return 2 b/c it's within the range 0.3 to 0.5 (inclusive)
 
-    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
+    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.1)
     would return 0 b/c it's within the range 0.3 to 0.24 (inclusive)
 
     It needs the list to be sorted before the method is called.
@@ -191,3 +192,64 @@ def find_index_for_value(values: List[float], value_to_search_for: float) -> int
             return i + 1
 
     return 0
+
+
+def find_index_for_value_binary_search(values: List[float], value_to_search_for: float) -> int:
+    """
+    Looks for the index that the value within the range of the search value. E.g.
+    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.45)
+    would return 2 b/c it's within the range 0.3 to 0.5 (inclusive)
+
+    find_index_for_value_n([0.25, 0.3, 0.5, 0.7, 0.75, 0.8, 0.9, 1], 0.1)
+    would return 0 b/c it's within the range 0.3 to 0.24 (inclusive)
+
+    Uses a binary search
+
+    :param values:
+    :param value_to_search_for:
+    :return: the index
+    """
+    low = 0
+    high = len(values)
+    mid = 0
+
+    while low < high:
+        mid = (low + high) // 2
+
+        if values[mid] == value_to_search_for:
+            return mid
+
+        # If target is less than array element, then search the left side
+        if value_to_search_for < values[mid]:
+
+            # If target is greater than previous mid, return closest of two
+            if mid > 0 and value_to_search_for > values[mid - 1]:
+                higher_index = mid
+                return get_higher_index(values[mid - 1], values[mid], value_to_search_for, higher_index)
+
+            # Repeat for left half
+            high = mid
+
+        # Search right side of the array
+        else:
+            if mid < (len(values) - 1) and value_to_search_for < values[mid + 1]:
+                higher_index = mid + 1
+                return get_higher_index(values[mid], values[mid + 1], value_to_search_for, higher_index)
+
+            low = mid + 1
+
+    # Only single element left after search
+    return mid
+
+
+def get_higher_index(val1, val2, target, index):
+    """
+    Returns the higher value index if a value
+    is in between 2 numbers. E.g.
+    5 in array [4,6] would return index 1
+    2 in array [4,6] would return index 0
+    """
+    if val1 < target <= val2:
+        return index
+    else:
+        return index - 1

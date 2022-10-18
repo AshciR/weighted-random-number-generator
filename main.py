@@ -25,7 +25,7 @@ def main():
 
 def test_random_number_generator(rng):
     random_numbers = []
-    for i in range(10_000_000):
+    for i in range(100_000_000):
         num = rng.get_random_number()
         random_numbers.append(num)
     freq_map = create_frequency_map(random_numbers)
