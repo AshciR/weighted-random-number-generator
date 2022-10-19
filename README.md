@@ -1,7 +1,7 @@
 # Weighted Random Number Generator
 
 ## What does it do?
-It'll provide you a random number given weighted distribution.
+It'll provide you a random number based on a weighted distribution.
 E.g.
 ```python
 sample_dist = {
